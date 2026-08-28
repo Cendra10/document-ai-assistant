@@ -3,10 +3,16 @@ from pypdf import PdfReader
 from docx import Document
 import io
 import json
+from pydantic import BaseModel
 
 app = FastAPI()
 
-@app.post("/uploadfile/")
+class UploadFileResponse(BaseModel):
+    file_name: str
+    file_size: int
+    chunks: list[str]
+
+@app.post("/uploadfile/", response_model=UploadFileResponse)
 async def create_upload_file(file: UploadFile):
 
     contents = await file.read() 
@@ -33,7 +39,7 @@ async def create_upload_file(file: UploadFile):
 
     chunks = chunk_text(extracted_text)
 
-    return {"file name": file.filename, "file size": len(contents), "chunks": chunks}
+    return {"file_name": file.filename, "file_size": len(contents), "chunks": chunks}
 
 def extract_text_from_pdf(change):
     page_list = []
