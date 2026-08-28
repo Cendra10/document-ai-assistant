@@ -18,22 +18,22 @@ async def create_upload_file(file: UploadFile):
             )
     elif file.content_type == "application/pdf":
         extracted_text = extract_text_from_pdf(contents)
-        return {"file name": file.filename, "file size": len(contents), "file extracted text": extracted_text}
     
     elif file.content_type == "text/plain":
         extracted_text = contents.decode('utf-8')
-        return{"file name": file.filename, "file size": len(contents), "file extracted text": extracted_text}
     
     elif file.content_type == "application/json":
         extracted_text = json.loads(contents.decode('utf-8'))
-        return{"file name": file.filename, "file size": len(contents), "file extracted text": extracted_text}
 
     elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         extracted_text = extract_text_from_docx(contents)
-        return {"file name": file.filename, "file size": len(contents), "file extracted text": extracted_text}
 
-    else:
-        return {"file name": file.filename, "file size": len(contents)}
+    if isinstance(extracted_text, dict):
+        extracted_text = json.dumps(extracted_text)
+
+    chunks = chunk_text(extracted_text)
+
+    return {"file name": file.filename, "file size": len(contents), "chunks": chunks}
 
 def extract_text_from_pdf(change):
     page_list = []
@@ -54,3 +54,15 @@ def extract_text_from_docx(contents):
         doc_list.append(text)
     full_text = ",".join(doc_list)
     return full_text
+
+def chunk_text(text, chunk_size=500, overlap=100):
+    result = []
+    start = 0
+
+    while start < len(text):
+        end = start + chunk_size
+        chunk = text[start:end]
+        result.append(chunk)
+
+        start = end - overlap 
+    return result
