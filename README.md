@@ -1,18 +1,18 @@
 # AI File Knowledge API
 
 ## Description
-Project API yang bisa menerima file (PDF, DOCX, TXT, JSON), mengekstrak isinya jadi teks bersih, lalu memecah (chunk) teks tersebut menjadi potongan-potongan yang siap digunakan untuk proses embedding/knowledge base.
+An API that accepts files (PDF, DOCX, TXT, JSON), extracts their content into clean text, then splits (chunks) the text into pieces ready for further processing (e.g. embedding/knowledge base).
 
 ## Features
-- Upload file via endpoint `POST /uploadfile/`
-- Dukung 4 tipe file: PDF, DOCX, TXT, JSON
-- Validasi tipe file (whitelist content-type)
-- Extract teks otomatis sesuai tipe file
-- Chunking teks otomatis (ukuran & overlap bisa diatur)
-- Validasi file kosong (ditolak)
-- Validasi ukuran file maksimum 5 MB
-- Error handling untuk file corrupt/rusak per tipe (PDF, DOCX, JSON, TXT)
-- Response terstruktur (Pydantic model)
+- Upload files via `POST /uploadfile/` endpoint
+- Supports 4 file types: PDF, DOCX, TXT, JSON
+- File type validation (content-type whitelist)
+- Automatic text extraction per file type
+- Automatic text chunking (configurable size & overlap)
+- Empty file validation (rejected)
+- Maximum file size validation (5 MB)
+- Error handling for corrupted/invalid files per type (PDF, DOCX, JSON, TXT)
+- Structured response (Pydantic model)
 
 ## Tech Stack
 - FastAPI
@@ -22,18 +22,18 @@ Project API yang bisa menerima file (PDF, DOCX, TXT, JSON), mengekstrak isinya j
 
 ## Installation
 
-1. Clone repository
+1. Clone the repository
    ```bash
    git clone https://github.com/Cendra10/document-ai-assistant.git
    cd document-ai-assistant
    ```
 
-2. Buat virtual environment
+2. Create a virtual environment
    ```bash
    python -m venv .venv
    ```
 
-3. Aktifkan virtual environment (Windows PowerShell)
+3. Activate the virtual environment (Windows PowerShell)
    ```bash
    .venv\Scripts\Activate.ps1
    ```
@@ -43,21 +43,21 @@ Project API yang bisa menerima file (PDF, DOCX, TXT, JSON), mengekstrak isinya j
    pip install -r requirements.txt
    ```
 
-5. Jalankan aplikasi
+5. Run the application
    ```bash
    uvicorn main:app --reload
    ```
 
-Server berjalan di `http://127.0.0.1:8000`
+The server runs at `http://127.0.0.1:8000`
 
 ## Usage
 
-1. Jalankan server (lihat langkah Installation), lalu buka Swagger UI di `http://127.0.0.1:8000/docs`
-2. Pilih endpoint `POST /uploadfile/`
-3. Klik "Try it out", upload file (PDF/DOCX/TXT/JSON, maksimal 5 MB)
-4. Klik "Execute"
+1. Start the server (see Installation steps), then open Swagger UI at `http://127.0.0.1:8000/docs`
+2. Select the `POST /uploadfile/` endpoint
+3. Click "Try it out", upload a file (PDF/DOCX/TXT/JSON, max 5 MB)
+4. Click "Execute"
 
-### Contoh request (curl)
+### Example request (curl)
 ```bash
 curl -X 'POST' \
   'http://127.0.0.1:8000/uploadfile/' \
@@ -66,13 +66,13 @@ curl -X 'POST' \
   -F 'file=@document.pdf;type=application/pdf'
 ```
 
-### Contoh response (200 OK)
+### Example response (200 OK)
 ```json
 {
   "file_name": "document.pdf",
   "file_size": 16656,
   "chunks": [
-    "Ini adalah contoh potongan teks hasil chunking...",
+    "This is an example text chunk from the chunking result...",
     "..."
   ]
 }
@@ -81,18 +81,18 @@ curl -X 'POST' \
 ## Project Structure
 ```
 document-ai-assistant/
-   main.py              # Endpoint FastAPI
+   main.py              # FastAPI endpoint
    schemas.py           # Pydantic response model
-   processing.py        # Extract text (PDF/DOCX/TXT/JSON) & chunking
-   requirements.txt     # Daftar dependencies
+   processing.py        # Text extraction (PDF/DOCX/TXT/JSON) & chunking
+   requirements.txt     # Dependency list
    README.md
 ```
 
 ## Future Improvement
-- Tambah unit test otomatis (pytest)
-- Dukungan tipe file lain (misal .md, .csv)
-- Simpan hasil chunk ke database (persist), bukan cuma di response
-- Rate limiting / auth untuk endpoint upload
+- Add automated unit tests (pytest)
+- Support for additional file types (e.g. .md, .csv)
+- Persist chunk results to a database instead of only returning them in the response
+- Rate limiting / authentication for the upload endpoint
 
 ## License
 MIT License
